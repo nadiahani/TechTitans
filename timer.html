@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List with Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #8B5DA6;
+            margin-bottom: 20px;
+        }
+
+        #task-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #task-input {
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #8B5DA6;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        #task-input:focus {
+            border-color: #6C3483;
+        }
+
+        #task-input::placeholder {
+            color: #aaa;
+        }
+
+        #task-form button {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #8B5DA6;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        #task-form button:hover {
+            background-color: #6C3483;
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #task-list li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #task-list li button {
+            padding: 4px 10px;
+            font-size: 14px;
+            background-color: #E59866;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #task-list li button:hover {
+            background-color: #DC7633;
+        }
+
+        #timer-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #timer-container > div {
+            margin-right: 10px;
+        }
+
+        #minutes,
+        #seconds {
+            font-size: 48px;
+            color: #8B5DA6;
+            padding: 0 5px;
+        }
+
+        #custom-timer-input {
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #8B5DA6;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            width: 80px;
+        }
+
+        #custom-timer-input:focus {
+            border-color: #6C3483;
+        }
+
+        #set-custom-timer {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #8B5DA6;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        #set-custom-timer:hover {
+            background-color: #6C3483;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #8B5DA6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #6C3483;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task List with Timer</h1>
+    <form id="task-form">
+        <input type="text" id="task-input" placeholder="Enter a task">
+        <button type="submit">Add Task</button>
+    </form>
+    <ul id="task-list"></ul>
+    <div id="timer-container">
+        <div>
+            <span id="minutes">25</span>:<span id="seconds">00</span>
+        </div>
+        <div>
+            <input type="number" id="custom-timer-input" placeholder="Set minutes" min="1">
+            <button id="set-custom-timer">Set Custom Timer</button>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="start-timer">Start Timer</button>
+        <button id="stop-timer">Stop Timer</button>
+        <button id="reset-timer">Reset Timer</button>
+        <button id="short-break">Short Break</button>
+        <button id="long-break">Long Break</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskForm = document.getElementById('task-form');
+            const taskList = document.getElementById('task-list');
+            const taskInput = document.getElementById('task-input');
+            const startTimerButton = document.getElementById('start-timer');
+            const stopTimerButton = document.getElementById('stop-timer');
+            const resetTimerButton = document.getElementById('reset-timer');
+            const shortBreakButton = document.getElementById('short-break');
+            const longBreakButton = document.getElementById('long-break');
+            const setCustomTimerButton = document.getElementById('set-custom-timer');
+            const customTimerInput = document.getElementById('custom-timer-input');
+            let timer;
+            let minutes = 25;
+            let seconds = 0;
+
+            function updateTimerDisplay() {
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            }
+
+            function startTimer(duration) {
+                minutes = duration;
+                seconds = 0;
+                updateTimerDisplay();
+                if (timer) clearInterval(timer);
+                timer = setInterval(() => {
+                    if (seconds === 0) {
+                        if (minutes === 0) {
+                            clearInterval(timer);
+                            timer = null;
+                            alert('Time is up!');
+                        } else {
+                            minutes -= 1;
+                            seconds = 59;
+                        }
+                    } else {
+                        seconds -= 1;
+                    }
+                    updateTimerDisplay();
+                }, 1000);
+            }
+
+            taskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const task = taskInput.value;
+                if (task) {
+                    const li = document.createElement('li');
+                    li.textContent = task;
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.addEventListener('click', () => {
+                        taskList.removeChild(li);
+                    });
+                    li.appendChild(deleteButton);
+                    taskList.appendChild(li);
+                    taskInput.value = '';
+                }
+            });
+
+            startTimerButton.addEventListener('click', () => {
+                startTimer(25);
+            });
+
+            stopTimerButton.addEventListener('click', () => {
+                clearInterval(timer);
+                timer = null;
+            });
+
+            resetTimerButton.addEventListener('click', () => {
+                clearInterval(timer);
+                timer = null;
+                minutes = 25;
+                seconds = 0;
+                updateTimerDisplay();
+            });
+
+            shortBreakButton.addEventListener('click', () => {
+                startTimer(5);
+            });
+
+            longBreakButton.addEventListener('click', () => {
+                startTimer(15);
+            });
+            
+            setCustomTimerButton.addEventListener('click', () => {
+                const customMinutes = parseInt(customTimerInput.value);
+                if (customMinutes > 0) {
+                    startTimer(customMinutes);
+                } else {
+                    alert('Please enter a valid number of minutes.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

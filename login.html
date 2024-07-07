@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #702963;
+            font-family: 'Arial', sans-serif;
+        }
+        .login-container {
+            background: #BDB5D5;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            width: 50%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0,123,255,0.5), rgba(255,0,150,0.5));
+            z-index: -1;
+        }
+        .login-container img.logo {
+            width: 150px; /* Adjust this value to change the width */
+            height: auto; /* Maintain aspect ratio */
+            margin-bottom: 1rem;
+        }
+        .login-container h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+        .login-container input {
+            width: 80%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-container button {
+            width: 80%; /* Adjusted to be consistent with input width */
+            padding: 0.75rem;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .login-container button:hover {
+            background: #0056b3;
+        }
+        .login-container .footer {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="C:\Users\user\OneDrive\Desktop\hackathon\logo.png" alt="Logo" class="logo">
+        <h2>USER LOGIN</h2>
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button>Login</button>
+        <div class="footer">
+            <span>&copy; 2024 TechTitan</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Notes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f3f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #5e2b97;
+            margin-top: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #5e2b97;
+            margin-top: 10px;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #7b42f6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #5e2b97;
+        }
+
+        #noteDisplay h2 {
+            margin-top: 40px;
+            color: #5e2b97;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        .note h3 {
+            margin: 0;
+        }
+
+        .note iframe {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .add-more-btn {
+            margin-bottom: 20px;
+            background-color: #6c63ff;
+        }
+
+        .add-more-btn:hover {
+            background-color: #4b3f94;
+        }
+
+        .file-inputs {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Your Notes</h1>
+        <form id="uploadForm">
+            <div id="noteSections">
+                <div class="note-section">
+                    <label for="noteTitle">Note Title:</label>
+                    <input type="text" class="noteTitle" required>
+                    <div class="file-inputs">
+                        <label for="noteFiles">Upload Note Files (PDF only):</label>
+                        <input type="file" class="noteFiles" accept=".pdf" multiple required>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="add-more-btn" onclick="addNoteSection()">Add More Notes</button>
+            <button type="submit">Upload Notes</button>
+        </form>
+        <div id="noteDisplay">
+            <h2>Uploaded Notes:</h2>
+        </div>
+    </div>
+    <script>
+        function addNoteSection() {
+            var noteSections = document.getElementById('noteSections');
+            var noteSection = document.createElement('div');
+            noteSection.className = 'note-section';
+            noteSection.innerHTML = `
+                <label for="noteTitle">Note Title:</label>
+                <input type="text" class="noteTitle" required>
+                <div class="file-inputs">
+                    <label for="noteFiles">Upload Note Files (PDF only):</label>
+                    <input type="file" class="noteFiles" accept=".pdf" multiple required>
+                </div>
+            `;
+            noteSections.appendChild(noteSection);
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var noteSections = document.querySelectorAll('.note-section');
+
+            noteSections.forEach(function(section) {
+                var title = section.querySelector('.noteTitle').value;
+                var files = section.querySelector('.noteFiles').files;
+
+                if (files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        if (file.type === 'application/pdf') {
+                            var reader = new FileReader();
+                            reader.onload = (function(file, title) {
+                                return function(e) {
+                                    var content = e.target.result;
+                                    displayNoteWithBlob(title, file);
+                                };
+                            })(file, title);
+                            reader.readAsDataURL(file);
+                        } else {
+                            alert('Please upload a valid PDF file.');
+                        }
+                    }
+                }
+            });
+        });
+
+        function displayNoteWithBlob(title, file) {
+            var displayDiv = document.getElementById('noteDisplay');
+            var blob = new Blob([file], { type: 'application/pdf' });
+            var url = URL.createObjectURL(blob);
+
+            var noteDiv = document.createElement('div');
+            noteDiv.className = 'note';
+            noteDiv.innerHTML = `
+                <h3>${title}</h3>
+                <iframe src="${url}" type="application/pdf"></iframe>
+                <button class="delete-btn" onclick="deleteNote(this)">Delete Note</button>
+            `;
+            displayDiv.appendChild(noteDiv);
+        }
+
+        function deleteNote(button) {
+            var noteDiv = button.parentElement;
+            noteDiv.remove();
+        }
+    </script>
+</body>
+</html>

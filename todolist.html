@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form id="task-form">
+        <input type="text" id="task-input" placeholder="Enter task" required>
+        <input type="date" id="due-date-input" required>
+        <button type="submit">Add Task</button>
+    </form>
+    <table id="task-table">
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="task-list"></tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskForm = document.getElementById('task-form');
+            const taskList = document.getElementById('task-list');
+            const taskInput = document.getElementById('task-input');
+            const dueDateInput = document.getElementById('due-date-input');
+
+            taskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const task = taskInput.value;
+                const dueDate = dueDateInput.value;
+                if (task && dueDate) {
+                    const tr = document.createElement('tr');
+                    const taskTd = document.createElement('td');
+                    taskTd.textContent = task;
+                    const dueDateTd = document.createElement('td');
+                    dueDateTd.textContent = dueDate;
+                    const statusTd = document.createElement('td');
+                    statusTd.textContent = 'In Progress';
+                    const actionTd = document.createElement('td');
+
+                    const inProgressButton = document.createElement('button');
+                    inProgressButton.textContent = 'In Progress';
+                    inProgressButton.style.display = 'none';
+                    const doneButton = document.createElement('button');
+                    doneButton.textContent = 'Done';
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+
+                    doneButton.addEventListener('click', () => {
+                        doneButton.style.display = 'none';
+                        inProgressButton.style.display = 'inline';
+                        statusTd.textContent = 'Done';
+                    });
+
+                    inProgressButton.addEventListener('click', () => {
+                        inProgressButton.style.display = 'none';
+                        doneButton.style.display = 'inline';
+                        statusTd.textContent = 'In Progress';
+                    });
+
+                    deleteButton.addEventListener('click', () => {
+                        taskList.removeChild(tr);
+                    });
+
+                    actionTd.appendChild(doneButton);
+                    actionTd.appendChild(inProgressButton);
+                    actionTd.appendChild(deleteButton);
+
+                    tr.appendChild(taskTd);
+                    tr.appendChild(dueDateTd);
+                    tr.appendChild(statusTd);
+                    tr.appendChild(actionTd);
+                    taskList.appendChild(tr);
+
+                    taskInput.value = '';
+                    dueDateInput.value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
